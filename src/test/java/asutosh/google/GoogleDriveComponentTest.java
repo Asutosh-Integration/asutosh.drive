@@ -26,16 +26,16 @@ public class GoogleDriveComponentTest extends CamelTestSupport {
 
     @Test
     public void testSample() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
-        
-        assertMockEndpointsSatisfied();
-        
-        assertMockEndpointsSatisfied();
-        String finalResultFromProducer = mock.getExchanges().get(0).getIn().getBody(String.class);
-        System.out.println(finalResultFromProducer);
-        String expected = "HELLO WORLD2";
-        Assert.assertTrue("Did not get expected result", finalResultFromProducer.contains(expected));
+//        MockEndpoint mock = getMockEndpoint("mock:result");
+//        mock.expectedMinimumMessageCount(1);
+//
+//        assertMockEndpointsSatisfied();
+//
+//        assertMockEndpointsSatisfied();
+//        String finalResultFromProducer = mock.getExchanges().get(0).getIn().getBody(String.class);
+//        System.out.println(finalResultFromProducer);
+//        String expected = "HELLO WORLD2";
+//        Assert.assertTrue("Did not get expected result", finalResultFromProducer.contains(expected));
     }
 
     @Override

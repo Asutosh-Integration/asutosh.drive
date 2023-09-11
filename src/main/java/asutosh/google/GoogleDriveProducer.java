@@ -16,10 +16,16 @@
  */
 package asutosh.google;
 
+import com.sap.it.api.securestore.AccessTokenAndUser;
+import com.sap.it.asdk.cmd.parser.model.BlueprintMetadataModel;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sap.it.api.securestore.SecureStoreService;
+import com.sap.it.api.securestore.UserCredential;
+import com.sap.it.api.securestore.exception.SecureStoreException;
+import com.sap.it.api.ITApiFactory;
 
 /**
  * The www.Sample.com producer.
@@ -41,15 +47,17 @@ public class GoogleDriveProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         String input = exchange.getIn().getBody(String.class);
 		String greetingMessage = endpoint.getGreetingsMessage();
-		if(greetingMessage == null || greetingMessage.isEmpty()) {
-			greetingMessage = "(Producer) Hello!";
+
+        SecureStoreService secureStoreService = ITApiFactory.getService(SecureStoreService.class, null);
+        AccessTokenAndUser accessTokenAndUser = secureStoreService.getAccesTokenForOauth2AuthorizationCodeCredential(greetingMessage);
+
+        String UserName = accessTokenAndUser.getUser();
+        String Token = accessTokenAndUser.getAccessToken();
+
+		if (Token != null) {
+		    LOG.debug(Token);
 		}
-		String messageInUpperCase = greetingMessage.toUpperCase();
-		if (input != null) {
-		    LOG.debug(input);
-			messageInUpperCase = input + " (Producer) : " + messageInUpperCase;
-		}
-		exchange.getIn().setBody(messageInUpperCase);
+		exchange.getIn().setBody(Token);
     }
 
 }
