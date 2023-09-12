@@ -44,6 +44,28 @@ public class GoogleDriveEndpoint extends DefaultPollingEndpoint {
     @UriParam
     private boolean useFormater;
 
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    @UriParam
+    private String operation;
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    @UriParam
+    private String filePath;
+
 	public boolean getUseFormater() {
 		return useFormater;
 	}

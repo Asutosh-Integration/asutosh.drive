@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="com.sap.it.public.generic.api-2.25.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/resources/com.sap.it.public.generic.api-2.25.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

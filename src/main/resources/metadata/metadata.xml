@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ComponentMetadata ComponentId="ctype::Adapter/cname::GoogleDrive/vendor::Asutosh/version::1.0.0" ComponentName="GoogleDrive" UIElementType="Adapter" IsExtension="false" IsFinal="true" IsPreserves="true" IsDefaultGenerator="true" ComponentDisplayName="GoogleDrive" xmlns:gen="http://www.sap.hci.adk.com/gen" xmlns:bp="http://www.adk.gen/xmlns/blueprint">
-    <Variant VariantName="Sample Component Sender" VariantId="ctype::AdapterVariant/cname::GoogleDrive/vendor::Asutosh/tp::scheme/mp::scheme/direction::Sender" MetadataVersion="2.0" gen:RuntimeComponentBaseUri="scheme" AttachmentBehavior="Preserve">
+    <Variant VariantName="Sample Component Sender" VariantId="ctype::AdapterVariant/cname::GoogleDrive/vendor::Asutosh/tp::scheme/mp::scheme/direction::Sender" MetadataVersion="2.0" gen:RuntimeComponentBaseUri="scheme" AttachmentBehavior="Preserve" useDefaultScheduler="false">
         <InputContent Cardinality="1" Scope="outsidepool" MessageCardinality="1" isStreaming="false">
             <Content>
                 <ContentType>Any</ContentType>
@@ -92,6 +92,9 @@
                 </AttributeReference>
             </AttributeGroup>
         </Tab>
+        <ReferencedComponents>
+            <ReferencedComponent>ctype::ExtensionVariant/cname::sap:Scheduler/version::1.0</ReferencedComponent>
+        </ReferencedComponents>
     </Variant>
     <Variant VariantName="Sample Component Receiver" VariantId="ctype::AdapterVariant/cname::GoogleDrive/vendor::Asutosh/tp::scheme/mp::scheme/direction::Receiver" IsRequestResponse="true" MetadataVersion="2.0" gen:RuntimeComponentBaseUri="scheme" AttachmentBehavior="Preserve">
         <InputContent Cardinality="1" Scope="outsidepool" MessageCardinality="1" isStreaming="false">
@@ -131,6 +134,27 @@
                 <AttributeReference>
                     <ReferenceName>greetingsMessage</ReferenceName>
                     <description>Configure Greetings Message</description>
+                </AttributeReference>
+            </AttributeGroup>
+        </Tab>
+        <Tab id="Settings">
+            <GuiLabels guid="e366f20e-7caa-43c3-a7ba-16b4d110853b">
+                <Label language="EN">Settings</Label>
+                <Label language="DE">Einstellungen</Label>
+            </GuiLabels>
+            <AttributeGroup id="GoogleDriveDetails">
+                <Name xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Test19 Endpoint</Name>
+                <GuiLabels guid="d5f0f7b0-5463-4eae-af69-e7d13dabbc18">
+                    <Label language="EN">Google Drive Details</Label>
+                    <Label language="DE">Google Drive-Details</Label>
+                </GuiLabels>
+                <AttributeReference>
+                    <ReferenceName>operation</ReferenceName>
+                    <description>Select Operation</description>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>filePath</ReferenceName>
+                    <description>Configure File Path</description>
                 </AttributeReference>
             </AttributeGroup>
         </Tab>
@@ -382,6 +406,46 @@
                 <GuiLabels guid="47829f7e-3ae7-4212-b085-97b2bf9dee51">
                     <Label language="EN">MINUTES</Label>
                     <Label language="DE">MINUTES</Label>
+                </GuiLabels>
+            </FixedValue>
+        </FixedValues>
+    </AttributeMetadata>
+    <AttributeMetadata>
+        <Name>filePath</Name>
+        <Usage>false</Usage>
+        <DataType>xsd:string</DataType>
+        <Default></Default>
+        <Length></Length>
+        <isparameterized>true</isparameterized>
+        <GuiLabels guid="f0cd8fb3-baf0-413f-8a50-40c028a6ed59">
+            <Label language="EN">File Path</Label>
+            <Label language="DE">Dateipfad</Label>
+        </GuiLabels>
+    </AttributeMetadata>
+    <AttributeMetadata>
+        <Name>operation</Name>
+        <Usage>false</Usage>
+        <DataType>xsd:string</DataType>
+        <Default>DOWNLOAD</Default>
+        <Length></Length>
+        <isparameterized>false</isparameterized>
+        <GuiLabels guid="5226be69-4044-453b-9450-44f05826b21f">
+            <Label language="EN">Choose Operation</Label>
+            <Label language="DE">Wählen Sie Operation</Label>
+        </GuiLabels>
+        <FixedValues>
+            <FixedValue>
+                <Value>DOWNLOAD</Value>
+                <GuiLabels guid="1be9eccc-2a9a-4782-ac0a-40409b67f1df">
+                    <Label language="EN">Download</Label>
+                    <Label language="DE">Herunterladen</Label>
+                </GuiLabels>
+            </FixedValue>
+            <FixedValue>
+                <Value>UPLOAD</Value>
+                <GuiLabels guid="fe59f5a3-0de5-4933-a94a-8ac43faf5af6">
+                    <Label language="EN">Upload</Label>
+                    <Label language="DE">Hochladen</Label>
                 </GuiLabels>
             </FixedValue>
         </FixedValues>
