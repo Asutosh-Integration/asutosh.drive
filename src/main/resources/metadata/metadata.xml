@@ -40,55 +40,26 @@
                     <description>Configure Greetings Message</description>
                 </AttributeReference>
             </AttributeGroup>
-            <AttributeGroup id="ScheduledPollConsumer">
-                <Name xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Scheduled Poll Consumer</Name>
-                <GuiLabels guid="813cbd00-ea82-47a9-8302-bf16aa6727b9">
-                    <Label language="EN">Scheduled Poll Consumer</Label>
-                    <Label language="DE">Scheduled Poll Consumer</Label>
+
+        </Tab>
+        <Tab id="Settings">
+            <GuiLabels guid="83c790a0-1df4-478b-ab93-51d37f0f8bd5">
+                <Label language="EN">Settings</Label>
+                <Label language="DE">Einstellungen</Label>
+            </GuiLabels>
+            <AttributeGroup id="GoogleDriveDetails">
+                <Name xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Test20 Endpoint</Name>
+                <GuiLabels guid="f69344a1-f2c7-41d4-88bf-a9502cc8032c">
+                    <Label language="EN">Google Drive Details</Label>
+                    <Label language="DE">Google Drive-Details</Label>
                 </GuiLabels>
                 <AttributeReference>
-                    <ReferenceName>backoffMultiplier</ReferenceName>
-                    <description>Configure Backoff Multiplier</description>
+                    <ReferenceName>operation</ReferenceName>
+                    <description>Select Operation</description>
                 </AttributeReference>
                 <AttributeReference>
-                    <ReferenceName>sendEmptyMessageWhenIdle</ReferenceName>
-                    <description>Configure Send Empty Message When Idle</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>initialDelay</ReferenceName>
-                    <description>Configure Initial Delay</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>backoffIdleThreshold</ReferenceName>
-                    <description>Configure Backoff Idle Threshold</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>useFixedDelay</ReferenceName>
-                    <description>Configure Use Fixed Delay</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>delay</ReferenceName>
-                    <description>Configure Delay</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>startScheduler</ReferenceName>
-                    <description>Configure Start Scheduler</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>runLoggingLevel</ReferenceName>
-                    <description>Configure Run Logging Level</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>backoffErrorThreshold</ReferenceName>
-                    <description>Configure Backoff Error Threshold</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>greedy</ReferenceName>
-                    <description>Configure Greedy</description>
-                </AttributeReference>
-                <AttributeReference>
-                    <ReferenceName>timeUnit</ReferenceName>
-                    <description>Configure Time Unit</description>
+                    <ReferenceName>filePath</ReferenceName>
+                    <description>Configure File Path</description>
                 </AttributeReference>
             </AttributeGroup>
         </Tab>

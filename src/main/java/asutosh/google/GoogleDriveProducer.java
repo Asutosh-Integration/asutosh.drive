@@ -62,7 +62,8 @@ public class GoogleDriveProducer extends DefaultProducer {
         super(endpoint);
         this.endpoint = endpoint;
         msgLogFactory = (AdapterMessageLogFactory) this.endpoint.getCamelContext().getRegistry()
-                .lookupByName(com.sap.it.api.msglog.adapter.AdapterMessageLogFactory.class.getName());;
+                .lookupByName(com.sap.it.api.msglog.adapter.AdapterMessageLogFactory.class.getName());
+        ;
     }
 
     @Override
@@ -91,14 +92,14 @@ public class GoogleDriveProducer extends DefaultProducer {
 
         if (Token != null) {
             LOG.debug(Token);
-            writeTrace(exchange,Token.getBytes(StandardCharsets.UTF_8), true);
+            writeTrace(exchange, Token.getBytes(StandardCharsets.UTF_8), true);
         }
 
         String fileId = null;
         InputStream payload = null;
         String folderId = null;
 
-        if(operation.equals("DOWNLOAD")){
+        if (operation.equals("DOWNLOAD")) {
             // Create an HttpClient instance
             HttpClient httpClient = HttpClients.createDefault();
 
@@ -107,12 +108,12 @@ public class GoogleDriveProducer extends DefaultProducer {
             exchange.getIn().setHeader("fileId", fileId);
 
             payload = downloadFile(httpClient, Token, fileId);
+            writeTrace(exchange, "Download Successful".getBytes(StandardCharsets.UTF_8), true);
 
-
-        }else if (operation.equals("UPLOAD")){
+        } else if (operation.equals("UPLOAD")) {
             // Create an HttpClient instance
             HttpClient httpClient = HttpClients.createDefault();
-            folderId = searchFileOrFolder(httpClient, Token, "root", filePath.substring(0,filePath.lastIndexOf("/")));
+            folderId = searchFileOrFolder(httpClient, Token, "root", filePath.substring(0, filePath.lastIndexOf("/")));
             // Create an HTTP POST request for file upload
             HttpPost httpPost = new HttpPost("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable");
 
@@ -122,7 +123,7 @@ public class GoogleDriveProducer extends DefaultProducer {
                     "\"parents\": [\"" + folderId + "\"]" +
                     "}";
 
-            httpPost.setHeader("Content-Type","application/json");
+            httpPost.setHeader("Content-Type", "application/json");
             httpPost.setEntity(new ByteArrayEntity(jsonMetadata.getBytes()));
 
             // Add the Bearer token to the Authorization header
@@ -137,15 +138,15 @@ public class GoogleDriveProducer extends DefaultProducer {
             if (statusCode == 200) {
                 // Resumable upload session created successfully
                 LOG.trace("1st call successful");
-                writeTrace(exchange,"1st call successful".getBytes(StandardCharsets.UTF_8), true);
+                writeTrace(exchange, "1st call successful".getBytes(StandardCharsets.UTF_8), true);
                 // Continue with sending the file data in chunks
                 int totalSize = is.available();
                 payload = uploadContentInChunks(httpClient, response.getFirstHeader("Location").getValue(), is, Token, totalSize);
-                writeTrace(exchange,"2nd call successful".getBytes(StandardCharsets.UTF_8), true);
+                writeTrace(exchange, "2nd call successful".getBytes(StandardCharsets.UTF_8), true);
             } else {
                 // Handle errors here
                 String err = "1st call unsuccessful" + EntityUtils.toString(response.getEntity());
-                writeTrace(exchange,err.getBytes(StandardCharsets.UTF_8), true);
+                writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
             }
         }
         exchange.getIn().setBody(payload);
@@ -153,7 +154,7 @@ public class GoogleDriveProducer extends DefaultProducer {
 
     String searchFileOrFolder(HttpClient httpClient, String bearerToken, String folderId, String filePath) throws Exception {
         // Define the API endpoint URL for listing files and folders in the current folder
-        String apiUrl = "https://www.googleapis.com/drive/v3/files?q='" + folderId + "'+in+parents";
+        String apiUrl = "https://www.googleapis.com/drive/v3/files?q='" + folderId + "'+in+parents+and+trashed=false";
 
         // Create an HTTP GET request with the API URL
         HttpGet httpGet = new HttpGet(apiUrl);
@@ -209,9 +210,9 @@ public class GoogleDriveProducer extends DefaultProducer {
         return null; // File or folder not found in this folder
     }
 
-    InputStream downloadFile (HttpClient httpClient, String bearerToken, String fileId) throws Exception {
+    InputStream downloadFile(HttpClient httpClient, String bearerToken, String fileId) throws Exception {
         // Define the API endpoint URL for listing files and folders in the current folder
-        String apiUrl = "https://www.googleapis.com/drive/v3/files/"+fileId+"?alt=media";
+        String apiUrl = "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media";
 
         // Create an HTTP GET request with the API URL
         HttpGet httpGet = new HttpGet(apiUrl);
@@ -239,7 +240,7 @@ public class GoogleDriveProducer extends DefaultProducer {
             while ((bytesRead = is.read(buffer)) != -1) {
                 // Calculate the Content-Range header
                 long startByte = offset;
-                long endByte = offset + bytesRead -1;
+                long endByte = offset + bytesRead - 1;
                 String contentRange = "bytes " + startByte + "-" + endByte + "/" + totalSize;
 
                 // Create an HTTP PUT request to upload a chunk of content with Content-Range header
@@ -295,7 +296,7 @@ public class GoogleDriveProducer extends DefaultProducer {
         // for synchronous adapters you may also need AdapterTraceMessageType.SENDER_OUTBOUND and AdapterTraceMessageType.RECEIVER_INBOUND
         AdapterTraceMessageType type = isOutbound ? AdapterTraceMessageType.RECEIVER_OUTBOUND : AdapterTraceMessageType.SENDER_INBOUND;
 
-        AdapterTraceMessage traceMessage = mplLog.createTraceMessage(type, traceData, false );//Setting isTruncated as false assuming traceData is less than 25MB.
+        AdapterTraceMessage traceMessage = mplLog.createTraceMessage(type, traceData, false);//Setting isTruncated as false assuming traceData is less than 25MB.
         // Encoding is optional, but should be set if available.
         traceMessage.setEncoding("UTF-8");
         // Headers are optional and do not forget to obfuscate security relevant header values.
