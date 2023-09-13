@@ -39,7 +39,7 @@ public class GoogleDriveEndpoint extends DefaultPollingEndpoint {
     private transient Logger logger = LoggerFactory.getLogger(GoogleDriveEndpoint.class);
 
     @UriParam
-    private String greetingsMessage;
+    private String OauthCred;
     
     @UriParam
     private boolean useFormater;
@@ -66,6 +66,15 @@ public class GoogleDriveEndpoint extends DefaultPollingEndpoint {
     @UriParam
     private String filePath;
 
+    @UriParam
+    private Boolean Archive;
+
+    @UriParam
+    private String archiveFilePath;
+
+    @UriParam
+    private Boolean Delete;
+
 	public boolean getUseFormater() {
 		return useFormater;
 	}
@@ -74,12 +83,12 @@ public class GoogleDriveEndpoint extends DefaultPollingEndpoint {
 		this.useFormater = useFormater;
 	}
 
-	public String getGreetingsMessage() {
-		return greetingsMessage;
+	public String getOauthCred() {
+		return OauthCred;
 	}
 
-	public void setGreetingsMessage(String greetingsMessage) {
-		this.greetingsMessage = greetingsMessage;
+	public void setOauthCred(String oauthCred) {
+		this.OauthCred = oauthCred;
 	}
 
 	public GoogleDriveEndpoint() {
@@ -106,5 +115,32 @@ public class GoogleDriveEndpoint extends DefaultPollingEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+
+    public Boolean getArchive() {
+        return Archive;
+    }
+
+    public GoogleDriveEndpoint setArchive(Boolean archive) {
+        Archive = archive;
+        return this;
+    }
+
+    public String getArchiveFilePath() {
+        return archiveFilePath;
+    }
+
+    public GoogleDriveEndpoint setArchiveFilePath(String archiveFilePath) {
+        this.archiveFilePath = archiveFilePath;
+        return this;
+    }
+
+    public Boolean getDelete() {
+        return Delete;
+    }
+
+    public GoogleDriveEndpoint setDelete(Boolean delete) {
+        Delete = delete;
+        return this;
     }
 }

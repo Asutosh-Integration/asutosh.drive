@@ -19,13 +19,12 @@ package asutosh.google;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sap.it.api.securestore.AccessTokenAndUser;
-import com.sap.it.asdk.cmd.parser.model.BlueprintMetadataModel;
 import org.apache.camel.Exchange;
-import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
@@ -35,8 +34,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.sap.it.api.securestore.SecureStoreService;
-import com.sap.it.api.securestore.UserCredential;
-import com.sap.it.api.securestore.exception.SecureStoreException;
 import com.sap.it.api.ITApiFactory;
 
 import java.io.*;
@@ -44,7 +41,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
 
-import org.apache.camel.Exchange;
 import com.sap.it.api.msglog.adapter.AdapterMessageLog;
 import com.sap.it.api.msglog.adapter.AdapterMessageLogFactory;
 import com.sap.it.api.msglog.adapter.AdapterTraceMessage;
@@ -74,9 +70,11 @@ public class GoogleDriveProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         InputStream is = exchange.getIn().getBody(InputStream.class);
 
-        String greetingMessage = endpoint.getGreetingsMessage();
+        String OauthCred = endpoint.getOauthCred();
         String operation = endpoint.getOperation();
         String filePath = endpoint.getFilePath();
+
+
 
         if (filePath.startsWith("/") && filePath != null) {
             filePath = filePath.substring(1);
@@ -85,7 +83,7 @@ public class GoogleDriveProducer extends DefaultProducer {
         }
 
         SecureStoreService secureStoreService = ITApiFactory.getService(SecureStoreService.class, null);
-        AccessTokenAndUser accessTokenAndUser = secureStoreService.getAccesTokenForOauth2AuthorizationCodeCredential(greetingMessage);
+        AccessTokenAndUser accessTokenAndUser = secureStoreService.getAccesTokenForOauth2AuthorizationCodeCredential(OauthCred);
 
         String UserName = accessTokenAndUser.getUser();
         String Token = accessTokenAndUser.getAccessToken();
@@ -105,11 +103,86 @@ public class GoogleDriveProducer extends DefaultProducer {
 
             // Start the recursive search
             fileId = searchFileOrFolder(httpClient, Token, "root", filePath);
+            folderId = searchFileOrFolder(httpClient, Token, "root", filePath.substring(0, filePath.lastIndexOf("/")));
             exchange.getIn().setHeader("fileId", fileId);
 
             payload = downloadFile(httpClient, Token, fileId);
             writeTrace(exchange, "Download Successful".getBytes(StandardCharsets.UTF_8), true);
+            Boolean archive = endpoint.getArchive();
+            Boolean delete = endpoint.getDelete();
 
+            if (archive) {
+                String archivePath = endpoint.getArchiveFilePath();
+                if (archivePath.startsWith("/") && archivePath != null) {
+                    archivePath = archivePath.substring(1);
+                } else {
+                    throw new Exception("Wrong File path");
+                }
+                String archiveFolderId = searchFileOrFolder(httpClient, Token, "root", archivePath.substring(0, archivePath.lastIndexOf("/")));
+                String path = archivePath+"\n"+archiveFolderId;
+                writeTrace(exchange, path.getBytes(StandardCharsets.UTF_8), true);
+                if (!delete) {
+                    HttpPost httpPost = new HttpPost("https://www.googleapis.com/drive/v3/files/" + fileId + "/copy");
+                    httpPost.addHeader("Authorization", "Bearer " + Token);
+                    HttpResponse response = httpClient.execute(httpPost);
+                    int statusCode = response.getStatusLine().getStatusCode();
+
+                    if (statusCode == 200) {
+                        String success = "Copy Successful";
+                        writeTrace(exchange, success.getBytes(StandardCharsets.UTF_8), true);
+                        String responseBody = EntityUtils.toString(response.getEntity());
+
+                        // Parse the JSON response using Jackson as the response is less in size
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+                        fileId = jsonNode.get("id").textValue();
+                    } else {
+                        // Handle errors here
+                        String err = "Copy unsuccessful" + EntityUtils.toString(response.getEntity());
+                        writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
+                    }
+                }
+                HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId + "?addParents=" + archiveFolderId + "&removeParents=" + folderId + "&alt=json");
+                String jsonMetadata = "{" +
+                        "\"name\": \"" + archivePath.substring(archivePath.lastIndexOf("/") + 1) + "\"" +
+                        "}";
+                httpPatch.setHeader("Content-Type", "application/json");
+                httpPatch.setHeader("Authorization", "Bearer " + Token);
+                httpPatch.setEntity(new ByteArrayEntity(jsonMetadata.getBytes()));
+
+                HttpResponse response = httpClient.execute(httpPatch);
+                int statusCode = response.getStatusLine().getStatusCode();
+
+                if (statusCode == 200) {
+                    String success = "Archive Successful" + EntityUtils.toString(response.getEntity());
+                    writeTrace(exchange, success.getBytes(StandardCharsets.UTF_8), true);
+                } else {
+                    // Handle errors here
+                    String err = "Archieve unsuccessful" + EntityUtils.toString(response.getEntity());
+                    writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
+                }
+            }else{
+                if(delete){
+                    HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId);
+                    String jsonMetadata = "{\"trashed\":true}";
+                    httpPatch.setHeader("Content-Type", "application/json");
+                    httpPatch.setHeader("Authorization", "Bearer " + Token);
+                    httpPatch.setEntity(new ByteArrayEntity(jsonMetadata.getBytes()));
+
+                    HttpResponse response = httpClient.execute(httpPatch);
+                    int statusCode = response.getStatusLine().getStatusCode();
+
+                    if (statusCode == 200) {
+                        String success = "Move to Trash Successful" + EntityUtils.toString(response.getEntity());
+                        writeTrace(exchange, success.getBytes(StandardCharsets.UTF_8), true);
+                    } else {
+                        // Handle errors here
+                        String err = "Move to Trash unsuccessful" + EntityUtils.toString(response.getEntity());
+                        writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
+                    }
+                }
+            }
         } else if (operation.equals("UPLOAD")) {
             // Create an HttpClient instance
             HttpClient httpClient = HttpClients.createDefault();

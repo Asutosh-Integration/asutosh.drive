@@ -42,8 +42,8 @@ public class GoogleDriveComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("scheme://foo?greetingsMessage=Hello world1")
-                  .to("scheme://bar?greetingsMessage=Hello world2")
+                from("scheme://foo?OauthCred=Hello world1")
+                  .to("scheme://bar?OauthCred=Hello world2")
                   .to("mock:result");
             }
         };

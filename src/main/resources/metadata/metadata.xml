@@ -13,35 +13,6 @@
                 <Schema xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></Schema>
             </Content>
         </OutputContent>
-        <Tab id="connection">
-            <GuiLabels guid="b4c970da-a1f8-443c-b063-046773f93135">
-                <Label language="EN">Connection</Label>
-                <Label language="DE">Connection</Label>
-            </GuiLabels>
-            <AttributeGroup id="defaultUriParameter">
-                <Name xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">URI Setting</Name>
-                <GuiLabels guid="041a3129-aedb-4e5b-a351-dc8d82ae7fbc">
-                    <Label language="EN">URI Setting</Label>
-                    <Label language="DE">URI Setting</Label>
-                </GuiLabels>
-                <AttributeReference>
-                    <ReferenceName>firstUriPart</ReferenceName>
-                    <description>Configure First URI Part</description>
-                </AttributeReference>
-            </AttributeGroup>
-            <AttributeGroup id="Message">
-                <Name xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Test19 Endpoint</Name>
-                <GuiLabels guid="eaa0dc7f-e350-44ae-85bf-6a7a46853302">
-                    <Label language="EN">Message Details</Label>
-                    <Label language="DE">Message Details</Label>
-                </GuiLabels>
-                <AttributeReference>
-                    <ReferenceName>greetingsMessage</ReferenceName>
-                    <description>Configure Greetings Message</description>
-                </AttributeReference>
-            </AttributeGroup>
-
-        </Tab>
         <Tab id="Settings">
             <GuiLabels guid="83c790a0-1df4-478b-ab93-51d37f0f8bd5">
                 <Label language="EN">Settings</Label>
@@ -60,6 +31,44 @@
                 <AttributeReference>
                     <ReferenceName>filePath</ReferenceName>
                     <description>Configure File Path</description>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>OauthCred</ReferenceName>
+                    <description>Configure Oauth 2.0 Authorization Alias</description>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>Archive</ReferenceName>
+                    <description>Please select if archive required</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operation</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>Delete</ReferenceName>
+                    <description>Please select if Delete required</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operation</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>archiveFilePath</ReferenceName>
+                    <description>Configure Archive File Path</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operation</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                        <EditCondition>
+                            <AttributeName>Archive</AttributeName>
+                            <AttributeValue>1</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
                 </AttributeReference>
             </AttributeGroup>
         </Tab>
@@ -80,34 +89,6 @@
                 <Schema xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></Schema>
             </Content>
         </OutputContent>
-        <Tab id="connection">
-            <GuiLabels guid="484b8319-7d64-49f9-bef9-d47a419b6446">
-                <Label language="EN">Connection</Label>
-                <Label language="DE">Connection</Label>
-            </GuiLabels>
-            <AttributeGroup id="defaultUriParameter">
-                <Name xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">URI Setting</Name>
-                <GuiLabels guid="55e2764d-9161-43a1-ad8d-28f198d3fdf1">
-                    <Label language="EN">URI Setting</Label>
-                    <Label language="DE">URI Setting</Label>
-                </GuiLabels>
-                <AttributeReference>
-                    <ReferenceName>firstUriPart</ReferenceName>
-                    <description>Configure First URI Part</description>
-                </AttributeReference>
-            </AttributeGroup>
-            <AttributeGroup id="MessageDetails">
-                <Name xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Test19 Endpoint</Name>
-                <GuiLabels guid="d5f0f7b0-5463-4eae-af69-e7d13dabbc18">
-                    <Label language="EN">Message Details</Label>
-                    <Label language="DE">Message Details</Label>
-                </GuiLabels>
-                <AttributeReference>
-                    <ReferenceName>greetingsMessage</ReferenceName>
-                    <description>Configure Greetings Message</description>
-                </AttributeReference>
-            </AttributeGroup>
-        </Tab>
         <Tab id="Settings">
             <GuiLabels guid="e366f20e-7caa-43c3-a7ba-16b4d110853b">
                 <Label language="EN">Settings</Label>
@@ -127,6 +108,44 @@
                     <ReferenceName>filePath</ReferenceName>
                     <description>Configure File Path</description>
                 </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>OauthCred</ReferenceName>
+                    <description>Configure Oauth 2.0 Authorization Alias</description>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>Archive</ReferenceName>
+                    <description>Please select if archive required</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operation</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>Delete</ReferenceName>
+                    <description>Please select if Delete required</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operation</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>archiveFilePath</ReferenceName>
+                    <description>Configure Archive File Path</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operation</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                        <EditCondition>
+                            <AttributeName>Archive</AttributeName>
+                            <AttributeValue>1</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
+                </AttributeReference>
             </AttributeGroup>
         </Tab>
     </Variant>
@@ -143,15 +162,15 @@
         </GuiLabels>
     </AttributeMetadata>
     <AttributeMetadata>
-        <Name>greetingsMessage</Name>
+        <Name>OauthCred</Name>
         <Usage>false</Usage>
         <DataType>xsd:string</DataType>
         <Default></Default>
         <Length></Length>
         <isparameterized>true</isparameterized>
-        <GuiLabels guid="239dd7c8-61ce-4ced-8037-437d688257f1">
-            <Label language="EN">Greetings Message</Label>
-            <Label language="DE">Greetings Message</Label>
+        <GuiLabels guid="927974d0-f5c0-443a-9707-6fe0141fde3f">
+            <Label language="EN">Credential Name</Label>
+            <Label language="DE">Anmeldename</Label>
         </GuiLabels>
     </AttributeMetadata>
     <AttributeMetadata>
@@ -382,6 +401,30 @@
         </FixedValues>
     </AttributeMetadata>
     <AttributeMetadata>
+        <Name>Archive</Name>
+        <Usage>false</Usage>
+        <DataType>xsd:boolean</DataType>
+        <Default></Default>
+        <Length></Length>
+        <isparameterized>true</isparameterized>
+        <GuiLabels guid="ebe1a5b6-e0dc-4092-acba-ed54e6dc909d">
+            <Label language="EN">Archive</Label>
+            <Label language="DE">Archiv</Label>
+        </GuiLabels>
+    </AttributeMetadata>
+    <AttributeMetadata>
+        <Name>Delete</Name>
+        <Usage>false</Usage>
+        <DataType>xsd:boolean</DataType>
+        <Default></Default>
+        <Length></Length>
+        <isparameterized>true</isparameterized>
+        <GuiLabels guid="cdb0c39e-4110-41b0-9c06-b8dcaa98e912">
+            <Label language="EN">Delete</Label>
+            <Label language="DE">Löschen</Label>
+        </GuiLabels>
+    </AttributeMetadata>
+    <AttributeMetadata>
         <Name>filePath</Name>
         <Usage>false</Usage>
         <DataType>xsd:string</DataType>
@@ -420,5 +463,17 @@
                 </GuiLabels>
             </FixedValue>
         </FixedValues>
+    </AttributeMetadata>
+    <AttributeMetadata>
+        <Name>archiveFilePath</Name>
+        <Usage>true</Usage>
+        <DataType>xsd:string</DataType>
+        <Default></Default>
+        <Length></Length>
+        <isparameterized>true</isparameterized>
+        <GuiLabels guid="f047e672-d94e-4be7-9190-081cef1a56be">
+            <Label language="EN">Archive File Path</Label>
+            <Label language="DE">Archivdateipfad</Label>
+        </GuiLabels>
     </AttributeMetadata>
 </ComponentMetadata>
