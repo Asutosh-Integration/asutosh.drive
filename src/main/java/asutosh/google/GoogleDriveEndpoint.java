@@ -75,6 +75,12 @@ public class GoogleDriveEndpoint extends DefaultPollingEndpoint {
     @UriParam
     private Boolean Delete;
 
+    @UriParam
+    private Boolean addTimestamp;
+
+    @UriParam
+    private String operationSender;
+
 	public boolean getUseFormater() {
 		return useFormater;
 	}
@@ -141,6 +147,24 @@ public class GoogleDriveEndpoint extends DefaultPollingEndpoint {
 
     public GoogleDriveEndpoint setDelete(Boolean delete) {
         Delete = delete;
+        return this;
+    }
+
+    public Boolean getAddTimestamp() {
+        return addTimestamp;
+    }
+
+    public GoogleDriveEndpoint setAddTimestamp(Boolean addTimestamp) {
+        this.addTimestamp = addTimestamp;
+        return this;
+    }
+
+    public String getOperationSender() {
+        return operationSender;
+    }
+
+    public GoogleDriveEndpoint setOperationSender(String operationSender) {
+        this.operationSender = operationSender;
         return this;
     }
 }

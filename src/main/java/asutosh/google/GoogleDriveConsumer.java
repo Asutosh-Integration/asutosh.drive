@@ -19,6 +19,7 @@ package asutosh.google;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -73,7 +74,7 @@ public class GoogleDriveConsumer extends ScheduledPollConsumer {
 
         // create a message body
         String OauthCred = endpoint.getOauthCred();
-        String operation = endpoint.getOperation();
+        String operation = endpoint.getOperationSender();
         String filePath = endpoint.getFilePath();
 
         if (filePath.startsWith("/") && filePath != null) {
@@ -143,9 +144,15 @@ public class GoogleDriveConsumer extends ScheduledPollConsumer {
                         writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
                     }
                 }
+                String arcFileName = archivePath.substring(archivePath.lastIndexOf("/") + 1);
+                Boolean addTimestamp = endpoint.getAddTimestamp();
+                if(addTimestamp){
+                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    arcFileName = arcFileName.substring(0,arcFileName.lastIndexOf(".") + 1) + timestamp + arcFileName.substring(arcFileName.lastIndexOf(".") + 1);
+                }
                 HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId + "?addParents=" + archiveFolderId + "&removeParents=" + folderId + "&alt=json");
                 String jsonMetadata = "{" +
-                        "\"name\": \"" + archivePath.substring(archivePath.lastIndexOf("/") + 1) + "\"" +
+                        "\"name\": \"" + arcFileName + "\"" +
                         "}";
                 httpPatch.setHeader("Content-Type", "application/json");
                 httpPatch.setHeader("Authorization", "Bearer " + Token);

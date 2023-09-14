@@ -39,7 +39,9 @@ import com.sap.it.api.ITApiFactory;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
+import java.sql.Timestamp;
 
 import com.sap.it.api.msglog.adapter.AdapterMessageLog;
 import com.sap.it.api.msglog.adapter.AdapterMessageLogFactory;
@@ -74,8 +76,6 @@ public class GoogleDriveProducer extends DefaultProducer {
         String operation = endpoint.getOperation();
         String filePath = endpoint.getFilePath();
 
-
-
         if (filePath.startsWith("/") && filePath != null) {
             filePath = filePath.substring(1);
         } else {
@@ -91,6 +91,8 @@ public class GoogleDriveProducer extends DefaultProducer {
         if (Token != null) {
             LOG.debug(Token);
             writeTrace(exchange, Token.getBytes(StandardCharsets.UTF_8), true);
+        }else{
+            throw new Exception("Oauth 2.0 Token is empty.");
         }
 
         String fileId = null;
@@ -101,7 +103,7 @@ public class GoogleDriveProducer extends DefaultProducer {
             // Create an HttpClient instance
             HttpClient httpClient = HttpClients.createDefault();
 
-            // Start the recursive search
+            // Get File ID and corresponding Folder Id
             fileId = searchFileOrFolder(httpClient, Token, "root", filePath);
             folderId = searchFileOrFolder(httpClient, Token, "root", filePath.substring(0, filePath.lastIndexOf("/")));
             exchange.getIn().setHeader("fileId", fileId);
@@ -119,7 +121,7 @@ public class GoogleDriveProducer extends DefaultProducer {
                     throw new Exception("Wrong File path");
                 }
                 String archiveFolderId = searchFileOrFolder(httpClient, Token, "root", archivePath.substring(0, archivePath.lastIndexOf("/")));
-                String path = archivePath+"\n"+archiveFolderId;
+                String path = archivePath + "\n" + archiveFolderId;
                 writeTrace(exchange, path.getBytes(StandardCharsets.UTF_8), true);
                 if (!delete) {
                     HttpPost httpPost = new HttpPost("https://www.googleapis.com/drive/v3/files/" + fileId + "/copy");
@@ -143,9 +145,15 @@ public class GoogleDriveProducer extends DefaultProducer {
                         writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
                     }
                 }
+                String arcFileName = archivePath.substring(archivePath.lastIndexOf("/") + 1);
+                Boolean addTimestamp = endpoint.getAddTimestamp();
+                if (addTimestamp) {
+                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    arcFileName = arcFileName.substring(0, arcFileName.lastIndexOf(".")) + timestamp + arcFileName.substring(arcFileName.lastIndexOf("."));
+                }
                 HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId + "?addParents=" + archiveFolderId + "&removeParents=" + folderId + "&alt=json");
                 String jsonMetadata = "{" +
-                        "\"name\": \"" + archivePath.substring(archivePath.lastIndexOf("/") + 1) + "\"" +
+                        "\"name\": \"" + arcFileName + "\"" +
                         "}";
                 httpPatch.setHeader("Content-Type", "application/json");
                 httpPatch.setHeader("Authorization", "Bearer " + Token);
@@ -162,8 +170,8 @@ public class GoogleDriveProducer extends DefaultProducer {
                     String err = "Archieve unsuccessful" + EntityUtils.toString(response.getEntity());
                     writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
                 }
-            }else{
-                if(delete){
+            } else {
+                if (delete) {
                     HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId);
                     String jsonMetadata = "{\"trashed\":true}";
                     httpPatch.setHeader("Content-Type", "application/json");
