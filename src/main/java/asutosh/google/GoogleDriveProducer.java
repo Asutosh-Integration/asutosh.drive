@@ -48,6 +48,8 @@ import com.sap.it.api.msglog.adapter.AdapterMessageLogFactory;
 import com.sap.it.api.msglog.adapter.AdapterTraceMessage;
 import com.sap.it.api.msglog.adapter.AdapterTraceMessageType;
 
+import static asutosh.google.GoogleDriveUtil.*;
+
 /**
  * The www.Sample.com producer.
  */
@@ -107,8 +109,11 @@ public class GoogleDriveProducer extends DefaultProducer {
             fileId = searchFileOrFolder(httpClient, Token, "root", filePath);
             folderId = searchFileOrFolder(httpClient, Token, "root", filePath.substring(0, filePath.lastIndexOf("/")));
             exchange.getIn().setHeader("fileId", fileId);
-
-            payload = downloadFile(httpClient, Token, fileId);
+            if (fileId != null){
+                payload = downloadFile(httpClient, Token, fileId);
+            }else{
+                throw new Exception("File not found.");
+            }
             writeTrace(exchange, "Download Successful".getBytes(StandardCharsets.UTF_8), true);
             Boolean archive = endpoint.getArchive();
             Boolean delete = endpoint.getDelete();
@@ -122,8 +127,7 @@ public class GoogleDriveProducer extends DefaultProducer {
                 }
                 String archiveFolderId = searchFileOrFolder(httpClient, Token, "root", archivePath.substring(0, archivePath.lastIndexOf("/")));
                 String path = archivePath + "\n" + archiveFolderId;
-                writeTrace(exchange, path.getBytes(StandardCharsets.UTF_8), true);
-                if (!delete) {
+                if (!delete && fileId != null) {
                     HttpPost httpPost = new HttpPost("https://www.googleapis.com/drive/v3/files/" + fileId + "/copy");
                     httpPost.addHeader("Authorization", "Bearer " + Token);
                     HttpResponse response = httpClient.execute(httpPost);
@@ -141,8 +145,7 @@ public class GoogleDriveProducer extends DefaultProducer {
                         fileId = jsonNode.get("id").textValue();
                     } else {
                         // Handle errors here
-                        String err = "Copy unsuccessful" + EntityUtils.toString(response.getEntity());
-                        writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
+                        throw new Exception("Copy unsuccessful" + EntityUtils.toString(response.getEntity()));
                     }
                 }
                 String arcFileName = archivePath.substring(archivePath.lastIndexOf("/") + 1);
@@ -151,27 +154,31 @@ public class GoogleDriveProducer extends DefaultProducer {
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     arcFileName = arcFileName.substring(0, arcFileName.lastIndexOf(".")) + timestamp + arcFileName.substring(arcFileName.lastIndexOf("."));
                 }
-                HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId + "?addParents=" + archiveFolderId + "&removeParents=" + folderId + "&alt=json");
-                String jsonMetadata = "{" +
-                        "\"name\": \"" + arcFileName + "\"" +
-                        "}";
-                httpPatch.setHeader("Content-Type", "application/json");
-                httpPatch.setHeader("Authorization", "Bearer " + Token);
-                httpPatch.setEntity(new ByteArrayEntity(jsonMetadata.getBytes()));
+                if (fileId != null && archiveFolderId != null && folderId != null){
+                    HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId + "?addParents=" + archiveFolderId + "&removeParents=" + folderId + "&alt=json");
+                    String jsonMetadata = "{" +
+                            "\"name\": \"" + arcFileName + "\"" +
+                            "}";
+                    httpPatch.setHeader("Content-Type", "application/json");
+                    httpPatch.setHeader("Authorization", "Bearer " + Token);
+                    httpPatch.setEntity(new ByteArrayEntity(jsonMetadata.getBytes()));
 
-                HttpResponse response = httpClient.execute(httpPatch);
-                int statusCode = response.getStatusLine().getStatusCode();
+                    HttpResponse response = httpClient.execute(httpPatch);
+                    int statusCode = response.getStatusLine().getStatusCode();
 
-                if (statusCode == 200) {
-                    String success = "Archive Successful" + EntityUtils.toString(response.getEntity());
-                    writeTrace(exchange, success.getBytes(StandardCharsets.UTF_8), true);
-                } else {
-                    // Handle errors here
-                    String err = "Archieve unsuccessful" + EntityUtils.toString(response.getEntity());
-                    writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
+                    if (statusCode == 200) {
+                        String success = "Archive Successful" + EntityUtils.toString(response.getEntity());
+                        writeTrace(exchange, success.getBytes(StandardCharsets.UTF_8), true);
+                    } else {
+                        // Handle errors here
+                        String err = "Archieve unsuccessful" + EntityUtils.toString(response.getEntity());
+                        writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
+                    }
+                }else{
+                    throw new Exception("Wrong Archive folder path");
                 }
             } else {
-                if (delete) {
+                if (delete && fileId != null) {
                     HttpPatch httpPatch = new HttpPatch("https://www.googleapis.com/drive/v3/files/" + fileId);
                     String jsonMetadata = "{\"trashed\":true}";
                     httpPatch.setHeader("Content-Type", "application/json");
@@ -187,8 +194,10 @@ public class GoogleDriveProducer extends DefaultProducer {
                     } else {
                         // Handle errors here
                         String err = "Move to Trash unsuccessful" + EntityUtils.toString(response.getEntity());
-                        writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
+                        throw new Exception(err);
                     }
+                } else if (delete) {
+                    throw new Exception("Can not delete as File doesnot exist.");
                 }
             }
         } else if (operation.equals("UPLOAD")) {
@@ -199,169 +208,39 @@ public class GoogleDriveProducer extends DefaultProducer {
             HttpPost httpPost = new HttpPost("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable");
 
             // Specify the folder ID as a parent in the file metadata
-            String jsonMetadata = "{" +
-                    "\"name\": \"" + filePath.substring(filePath.lastIndexOf("/") + 1) + "\"," +
-                    "\"parents\": [\"" + folderId + "\"]" +
-                    "}";
+            if(folderId != null){
+                String jsonMetadata = "{" +
+                        "\"name\": \"" + filePath.substring(filePath.lastIndexOf("/") + 1) + "\"," +
+                        "\"parents\": [\"" + folderId + "\"]" +
+                        "}";
+                httpPost.setHeader("Content-Type", "application/json");
+                httpPost.setEntity(new ByteArrayEntity(jsonMetadata.getBytes()));
 
-            httpPost.setHeader("Content-Type", "application/json");
-            httpPost.setEntity(new ByteArrayEntity(jsonMetadata.getBytes()));
+                // Add the Bearer token to the Authorization header
+                httpPost.setHeader("Authorization", "Bearer " + Token);
 
-            // Add the Bearer token to the Authorization header
-            httpPost.setHeader("Authorization", "Bearer " + Token);
-
-            // Execute the initial POST request to create the resumable upload session
-            HttpResponse response = httpClient.execute(httpPost);
-
-            // Check the response status code
-            int statusCode = response.getStatusLine().getStatusCode();
-
-            if (statusCode == 200) {
-                // Resumable upload session created successfully
-                LOG.trace("1st call successful");
-                writeTrace(exchange, "1st call successful".getBytes(StandardCharsets.UTF_8), true);
-                // Continue with sending the file data in chunks
-                int totalSize = is.available();
-                payload = uploadContentInChunks(httpClient, response.getFirstHeader("Location").getValue(), is, Token, totalSize);
-                writeTrace(exchange, "2nd call successful".getBytes(StandardCharsets.UTF_8), true);
-            } else {
-                // Handle errors here
-                String err = "1st call unsuccessful" + EntityUtils.toString(response.getEntity());
-                writeTrace(exchange, err.getBytes(StandardCharsets.UTF_8), true);
-            }
-        }
-        exchange.getIn().setBody(payload);
-    }
-
-    String searchFileOrFolder(HttpClient httpClient, String bearerToken, String folderId, String filePath) throws Exception {
-        // Define the API endpoint URL for listing files and folders in the current folder
-        String apiUrl = "https://www.googleapis.com/drive/v3/files?q='" + folderId + "'+in+parents+and+trashed=false";
-
-        // Create an HTTP GET request with the API URL
-        HttpGet httpGet = new HttpGet(apiUrl);
-
-        // Add the Bearer token to the request header for authentication
-        httpGet.addHeader("Authorization", "Bearer " + bearerToken);
-
-        // Execute the request
-        HttpResponse response = httpClient.execute(httpGet);
-
-        // Check the response status code
-        int statusCode = response.getStatusLine().getStatusCode();
-
-        if (statusCode == 200) {
-            // Request was successful
-            String responseBody = EntityUtils.toString(response.getEntity());
-
-            // Parse the JSON response using Jackson
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(responseBody);
-
-            // Split the file path into components and ignore the first element (root)
-            String[] pathComponents = filePath.split("/");
-            if (pathComponents.length > 0) {
-                pathComponents = Arrays.copyOfRange(pathComponents, 0, pathComponents.length);
-            }
-
-            // Check if the target exists in this folder
-            for (JsonNode item : jsonNode.get("files")) {
-                if (item.has("name") && item.get("name").asText().equals(pathComponents[0])) {
-                    // If it's a folder, continue searching inside the folder
-                    if (item.has("mimeType") && item.get("mimeType").asText().equals("application/vnd.google-apps.folder")) {
-                        String subfolderId = item.get("id").asText();
-                        if (pathComponents.length == 1) {
-                            return item.get("id").asText();
-                        } else {
-                            return searchFileOrFolder(httpClient, bearerToken, subfolderId, String.join("/", Arrays.copyOfRange(pathComponents, 1, pathComponents.length)));
-                        }
-                    } else if (item.has("mimeType") && !item.get("mimeType").asText().equals("application/vnd.google-apps.folder")) {
-                        if (pathComponents.length == 1) {
-                            return item.get("id").asText(); // Found the target folder
-                        } else {
-                            System.err.println("Error: Wrong Path");
-                        }
-                    }
-                }
-            }
-        } else {
-            // Handle errors here
-            System.err.println("Error: API request failed with status code " + statusCode);
-        }
-
-        return null; // File or folder not found in this folder
-    }
-
-    InputStream downloadFile(HttpClient httpClient, String bearerToken, String fileId) throws Exception {
-        // Define the API endpoint URL for listing files and folders in the current folder
-        String apiUrl = "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media";
-
-        // Create an HTTP GET request with the API URL
-        HttpGet httpGet = new HttpGet(apiUrl);
-
-        // Add the Bearer token to the request header for authentication
-        httpGet.addHeader("Authorization", "Bearer " + bearerToken);
-
-        // Execute the request
-        HttpResponse response = httpClient.execute(httpGet);
-
-        // Check the response status code
-        int statusCode = response.getStatusLine().getStatusCode();
-
-        if (statusCode == 200) {
-            return response.getEntity().getContent();
-        }
-        return null;
-    }
-
-    InputStream uploadContentInChunks(HttpClient httpClient, String uploadUrl, InputStream is, String bearerToken, int totalSize) {
-        try {
-            byte[] buffer = new byte[256 * 1024 * 100 * 2]; // 256 KB buffer
-            int bytesRead;
-            long offset = 0;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                // Calculate the Content-Range header
-                long startByte = offset;
-                long endByte = offset + bytesRead - 1;
-                String contentRange = "bytes " + startByte + "-" + endByte + "/" + totalSize;
-
-                // Create an HTTP PUT request to upload a chunk of content with Content-Range header
-                HttpPut httpPut = new HttpPut(uploadUrl);
-                httpPut.setHeader("Authorization", "Bearer " + bearerToken);
-                httpPut.setHeader("Content-Range", contentRange);
-
-                // Create an InputStreamEntity for the chunk
-                InputStreamEntity inputStreamEntity = new InputStreamEntity(new ByteArrayInputStream(buffer, 0, bytesRead));
-
-                // Set the content type (you may adjust this based on your content)
-                inputStreamEntity.setContentType("text/plain");
-
-                // Set the entity for the request
-                httpPut.setEntity(inputStreamEntity);
-
-                // Execute the PUT request to upload the chunk
-                HttpResponse response = httpClient.execute(httpPut);
+                // Execute the initial POST request to create the resumable upload session
+                HttpResponse response = httpClient.execute(httpPost);
 
                 // Check the response status code
                 int statusCode = response.getStatusLine().getStatusCode();
 
-                if (statusCode == 308) {
-                    // Chunk upload successful, continue with the next chunk
-                    offset += bytesRead;
-                    System.out.println("Uploaded chunk: " + contentRange);
-                } else if (statusCode == 200 || statusCode == 201) {
-                    // Chunk uploaded successfully
-                    return response.getEntity().getContent();
+                if (statusCode == 200) {
+                    // Resumable upload session created successfully and Continue with sending the file data in chunks
+                    int totalSize = is.available();
+                    payload = uploadContentInChunks(httpClient, response.getFirstHeader("Location").getValue(), is, Token, totalSize);
+                    writeTrace(exchange, "Upload successful".getBytes(StandardCharsets.UTF_8), true);
                 } else {
                     // Handle errors here
-                    return response.getEntity().getContent();
+                    String err = "Upload Session URL call unsuccessful with Error " + EntityUtils.toString(response.getEntity());
+                    throw new Exception(err);
                 }
+            } else {
+               throw new Exception("Folder not found");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return null;
+        exchange.getIn().setBody(payload);
     }
-
 
     void writeTrace(Exchange exchange, byte[] traceData, boolean isOutbound) {
         // replace "<adapter type>" by your adapter type!

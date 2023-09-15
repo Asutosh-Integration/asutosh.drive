@@ -25,11 +25,13 @@
                     <Label language="DE">Google Drive-Details</Label>
                 </GuiLabels>
                 <AttributeReference>
-                    <ReferenceName>operation</ReferenceName>
-                    <description>Select Operation</description>
+                    <ReferenceName>operationSender</ReferenceName>
+                    <description>Only Download Operation supported in Sender adapter</description>
                 </AttributeReference>
                 <AttributeReference>
                     <ReferenceName>filePath</ReferenceName>
+                    <Restriction>Constraint.isValidRegex(^\/(?:[^\/]+\/)+[^\/]+\..+$)</Restriction>
+                    <ErrorMessage>Please mention correct path separated by "/" and please include filename with extension after "."</ErrorMessage>
                     <description>Configure File Path</description>
                 </AttributeReference>
                 <AttributeReference>
@@ -41,7 +43,7 @@
                     <description>Please select if archive required</description>
                     <AndCondition>
                         <EditCondition>
-                            <AttributeName>operation</AttributeName>
+                            <AttributeName>operationSender</AttributeName>
                             <AttributeValue>DOWNLOAD</AttributeValue>
                         </EditCondition>
                     </AndCondition>
@@ -51,17 +53,33 @@
                     <description>Please select if Delete required</description>
                     <AndCondition>
                         <EditCondition>
-                            <AttributeName>operation</AttributeName>
+                            <AttributeName>operationSender</AttributeName>
                             <AttributeValue>DOWNLOAD</AttributeValue>
                         </EditCondition>
                     </AndCondition>
                 </AttributeReference>
                 <AttributeReference>
                     <ReferenceName>archiveFilePath</ReferenceName>
+                    <Restriction>Constraint.isValidRegex(^\/(?:[^\/]+\/)+[^\/]+\..+$)</Restriction>
+                    <ErrorMessage>Please mention correct path separated by "/" and please include filename with extension after "."</ErrorMessage>
                     <description>Configure Archive File Path</description>
                     <AndCondition>
                         <EditCondition>
-                            <AttributeName>operation</AttributeName>
+                            <AttributeName>operationSender</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                        <EditCondition>
+                            <AttributeName>Archive</AttributeName>
+                            <AttributeValue>1</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>addTimestamp</ReferenceName>
+                    <description>Add Timestamp at the end of the file</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operationSender</AttributeName>
                             <AttributeValue>DOWNLOAD</AttributeValue>
                         </EditCondition>
                         <EditCondition>
@@ -106,6 +124,8 @@
                 </AttributeReference>
                 <AttributeReference>
                     <ReferenceName>filePath</ReferenceName>
+                    <Restriction>Constraint.isValidRegex(^\/(?:[^\/]+\/)+[^\/]+\..+$)</Restriction>
+                    <ErrorMessage>Please mention correct path separated by "/" and please include filename with extension after "."</ErrorMessage>
                     <description>Configure File Path</description>
                 </AttributeReference>
                 <AttributeReference>
@@ -134,7 +154,23 @@
                 </AttributeReference>
                 <AttributeReference>
                     <ReferenceName>archiveFilePath</ReferenceName>
+                    <Restriction>Constraint.isValidRegex(^\/(?:[^\/]+\/)+[^\/]+\..+$)</Restriction>
+                    <ErrorMessage>Please mention correct path separated by "/" and please include filename with extension after "."</ErrorMessage>
                     <description>Configure Archive File Path</description>
+                    <AndCondition>
+                        <EditCondition>
+                            <AttributeName>operation</AttributeName>
+                            <AttributeValue>DOWNLOAD</AttributeValue>
+                        </EditCondition>
+                        <EditCondition>
+                            <AttributeName>Archive</AttributeName>
+                            <AttributeValue>1</AttributeValue>
+                        </EditCondition>
+                    </AndCondition>
+                </AttributeReference>
+                <AttributeReference>
+                    <ReferenceName>addTimestamp</ReferenceName>
+                    <description>Add Timestamp at the end of the file</description>
                     <AndCondition>
                         <EditCondition>
                             <AttributeName>operation</AttributeName>
@@ -475,5 +511,38 @@
             <Label language="EN">Archive File Path</Label>
             <Label language="DE">Archivdateipfad</Label>
         </GuiLabels>
+    </AttributeMetadata>
+    <AttributeMetadata>
+        <Name>addTimestamp</Name>
+        <Usage>false</Usage>
+        <DataType>xsd:boolean</DataType>
+        <Default></Default>
+        <Length></Length>
+        <isparameterized>true</isparameterized>
+        <GuiLabels guid="cca365a4-fcee-489d-8286-8cc94cd68d35">
+            <Label language="EN">Add Timestamp</Label>
+            <Label language="DE">Zeitstempel hinzufügen</Label>
+        </GuiLabels>
+    </AttributeMetadata>
+    <AttributeMetadata>
+        <Name>operationSender</Name>
+        <Usage>false</Usage>
+        <DataType>xsd:string</DataType>
+        <Default>DOWNLOAD</Default>
+        <Length></Length>
+        <isparameterized>false</isparameterized>
+        <GuiLabels guid="68cab22a-7bb2-4dbd-9d81-61578ab8984a">
+            <Label language="EN">Choose Operation</Label>
+            <Label language="DE">Wählen Sie Operation</Label>
+        </GuiLabels>
+        <FixedValues>
+            <FixedValue>
+                <Value>DOWNLOAD</Value>
+                <GuiLabels guid="1be9eccc-2a9a-4782-ac0a-40409b67f1df">
+                    <Label language="EN">Download</Label>
+                    <Label language="DE">Herunterladen</Label>
+                </GuiLabels>
+            </FixedValue>
+        </FixedValues>
     </AttributeMetadata>
 </ComponentMetadata>
