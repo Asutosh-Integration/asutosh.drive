@@ -478,7 +478,7 @@
         <DataType>xsd:string</DataType>
         <Default>DOWNLOAD</Default>
         <Length></Length>
-        <isparameterized>false</isparameterized>
+        <isparameterized>true</isparameterized>
         <GuiLabels guid="5226be69-4044-453b-9450-44f05826b21f">
             <Label language="EN">Choose Operation</Label>
             <Label language="DE">Wählen Sie Operation</Label>
@@ -530,7 +530,7 @@
         <DataType>xsd:string</DataType>
         <Default>DOWNLOAD</Default>
         <Length></Length>
-        <isparameterized>false</isparameterized>
+        <isparameterized>true</isparameterized>
         <GuiLabels guid="68cab22a-7bb2-4dbd-9d81-61578ab8984a">
             <Label language="EN">Choose Operation</Label>
             <Label language="DE">Wählen Sie Operation</Label>
