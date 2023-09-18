@@ -7,10 +7,10 @@ import java.io.*;
 public class FileToBase64AndSaveToFile {
     public static void main(String[] args) {
         // Specify the input file path
-        String inputFilePath = "C:\\Users\\asmaharana\\Documents\\Asutosh\\Google\\asutosh.drive\\target\\build\\asutosh.drive.esa";
+        String inputFilePath = "target/build/asutosh.drive.esa";
 
         // Specify the output file path
-        String outputFilePath = "C:\\Users\\asmaharana\\Documents\\Asutosh\\Google\\asutosh.drive\\target\\build\\asutosh.drive-Base64.txt";
+        String outputFilePath = "target/build/asutosh.drive-Base64.txt";
 
         try {
             // Read the input file into a byte array
