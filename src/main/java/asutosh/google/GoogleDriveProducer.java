@@ -18,35 +18,32 @@ package asutosh.google;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sap.it.api.securestore.AccessTokenAndUser;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.sap.it.api.securestore.SecureStoreService;
 import com.sap.it.api.ITApiFactory;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
-import java.sql.Timestamp;
-
 import com.sap.it.api.msglog.adapter.AdapterMessageLog;
 import com.sap.it.api.msglog.adapter.AdapterMessageLogFactory;
 import com.sap.it.api.msglog.adapter.AdapterTraceMessage;
 import com.sap.it.api.msglog.adapter.AdapterTraceMessageType;
+import com.sap.it.api.securestore.AccessTokenAndUser;
+import com.sap.it.api.securestore.SecureStoreService;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static asutosh.google.GoogleDriveUtil.*;
 
@@ -76,7 +73,7 @@ public class GoogleDriveProducer extends DefaultProducer {
 
         String OauthCred = endpoint.getOauthCred();
         String operation = endpoint.getOperation();
-        String filePath = endpoint.getFilePath();
+        String filePath = getValue(endpoint.getFilePath(),exchange);
 
         if (filePath.startsWith("/") && filePath != null) {
             filePath = filePath.substring(1);
@@ -119,7 +116,7 @@ public class GoogleDriveProducer extends DefaultProducer {
             Boolean delete = endpoint.getDelete();
 
             if (archive) {
-                String archivePath = endpoint.getArchiveFilePath();
+                String archivePath = getValue(endpoint.getArchiveFilePath(),exchange);
                 if (archivePath.startsWith("/") && archivePath != null) {
                     archivePath = archivePath.substring(1);
                 } else {
@@ -261,6 +258,38 @@ public class GoogleDriveProducer extends DefaultProducer {
         traceMessage.setEncoding("UTF-8");
         // Headers are optional and do not forget to obfuscate security relevant header values.
         mplLog.writeTrace(traceMessage);
+    }
+
+    public String getValue(String paramName, Exchange exchange) throws IllegalArgumentException {
+        // Create regex for Simple expression
+        String regex = "\\$\\{[^\\}]+\\}";
+
+        // Create a pattern for Simple expressions
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(paramName);
+
+        StringBuilder modifiedString = new StringBuilder();
+
+        int lastEnd = 0;
+        while (matcher.find()) {
+            // Append the text before the expression
+            modifiedString.append(paramName.substring(lastEnd, matcher.start()));
+
+            // Get the Simple expression
+            String foundExpression = matcher.group();
+
+            // Evaluate the expression using Camel's Simple Language
+            String decodedValue = SimpleLanguage.simple(foundExpression).evaluate(exchange, String.class);
+
+            // Append the decoded value
+            modifiedString.append(decodedValue);
+
+            lastEnd = matcher.end();
+        }
+
+        modifiedString.append(paramName.substring(lastEnd));
+
+        return modifiedString.toString();
     }
 
 }

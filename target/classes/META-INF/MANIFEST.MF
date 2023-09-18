@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1694711443998
+Bnd-LastModified: 1695051633792
 Build-Jdk: 1.8.0_321
 Built-By: asmaharana
 Bundle-ManifestVersion: 2
@@ -280,11 +280,12 @@ Import-Package: com.fasterxml.jackson.databind;version="[2.15,3)",com.sa
  x500,javax.xml,javax.xml.datatype,javax.xml.namespace,javax.xml.parsers
  ,javax.xml.transform,javax.xml.transform.dom,javax.xml.transform.stream
  ,net.sf.ehcache,net.spy.memcached,org.apache.camel;version="[2.24,3)",o
- rg.apache.camel.impl;version="[2.24,3)",org.apache.camel.spi;version="[
- 2.24,3)",org.apache.commons.codec.binary;version="[1.11,2)",org.apache.
- commons.logging;version="[1.2,2)",org.apache.http,org.apache.http.clien
- t;version="[4.5,5)",org.apache.http.client.methods;version="[4.5,5)",or
- g.apache.http.entity,org.apache.http.impl.client;version="[4.5,5)",org.
- apache.http.util,org.ietf.jgss,org.osgi.framework,org.osgi.service.cm;v
- ersion="[1.5,2)",org.slf4j;version="[1.6,2)",org.w3c.dom,org.xml.sax
+ rg.apache.camel.impl;version="[2.24,3)",org.apache.camel.language.simpl
+ e;version="[2.24,3)",org.apache.camel.spi;version="[2.24,3)",org.apache
+ .commons.codec.binary;version="[1.11,2)",org.apache.commons.logging;ver
+ sion="[1.2,2)",org.apache.http,org.apache.http.client;version="[4.5,5)"
+ ,org.apache.http.client.methods;version="[4.5,5)",org.apache.http.entit
+ y,org.apache.http.impl.client;version="[4.5,5)",org.apache.http.util,or
+ g.ietf.jgss,org.osgi.framework,org.osgi.service.cm;version="[1.5,2)",or
+ g.slf4j;version="[1.6,2)",org.w3c.dom,org.xml.sax
 Tool: Bnd-2.1.0.20130426-122213

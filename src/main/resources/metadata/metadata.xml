@@ -124,7 +124,7 @@
                 </AttributeReference>
                 <AttributeReference>
                     <ReferenceName>filePath</ReferenceName>
-                    <Restriction>Constraint.isValidRegex(^\/(?:[^\/]+\/)+[^\/]+\..+$)</Restriction>
+                    <Restriction>Constraint.isValidRegex(^(\/(?:[^\/]*\/)*(?:[^\/]*\.(?![^{]*\$\{[^}]*\}))+[^\/]*|(\$\{[^}]+\}\/(?:[^\/]+\/)*[^\/]+\.[^\/]+)|(\$\{[^}]+\})*$))</Restriction>
                     <ErrorMessage>Please mention correct path separated by "/" and please include filename with extension after "."</ErrorMessage>
                     <description>Configure File Path</description>
                 </AttributeReference>
@@ -154,7 +154,7 @@
                 </AttributeReference>
                 <AttributeReference>
                     <ReferenceName>archiveFilePath</ReferenceName>
-                    <Restriction>Constraint.isValidRegex(^\/(?:[^\/]+\/)+[^\/]+\..+$)</Restriction>
+                    <Restriction>Constraint.isValidRegex(^(\/(?:[^\/]*\/)*(?:[^\/]*\.(?![^{]*\$\{[^}]*\}))+[^\/]*|(\$\{[^}]+\}\/(?:[^\/]+\/)*[^\/]+\.[^\/]+)|(\$\{[^}]+\})*$))</Restriction>
                     <ErrorMessage>Please mention correct path separated by "/" and please include filename with extension after "."</ErrorMessage>
                     <description>Configure Archive File Path</description>
                     <AndCondition>
