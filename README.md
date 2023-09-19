@@ -32,9 +32,9 @@ To get started with this custom Google Drive adapter for SAP Integration Suite, 
 
 2. **Importing Custom Integration Adapter:** import custom integration adapter in your integration package. Please go through the [documentation](https://help.sap.com/docs/cloud-integration/sap-cloud-integration/importing-custom-integration-adapter-in-cloud-foundry-environment) for detailed step-by-step guide.
 
-3. **Setup Authentication:** Create Security Material (Type OAuth2 Authorization Code (Generic)). Follow the [Wiki](Documentation/createSecurityMaterial.md) section for detailed guide.
+3. **Setup Authentication:** Create Security Material (Type OAuth2 Authorization Code (Generic)). Follow the [Documentation](Documentation/createSecurityMaterial.md) section for detailed guide.
 
-4. **Configure and Deploy:** Configure the adapter in the iFlow and deploy it to your SAP Integration Suite tenant. Follow the [Wiki](Documentation/configureAndDeploy.md) section for detailed guide.
+4. **Configure and Deploy:** Configure the adapter in the iFlow and deploy it to your SAP Integration Suite tenant. Follow the [Documentation](Documentation/configureAndDeploy.md) section for detailed guide.
 
 ## Documentation
 

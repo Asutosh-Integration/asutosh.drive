@@ -80,6 +80,6 @@ In this guide, we will explore two methods for deploying a Custom Google Drive A
 1. Navigate to the SAP Integration Suite Web UI and deploy the adapter.
 2. Ensure that the Custom Google Drive Adapter is successfully deployed.
 
-Congratulations! You have successfully deployed a Custom Google Drive Adapter in SAP Integration Suite using either of the above two different methods.
+Congratulations! You have successfully deployed a Custom Google Drive Adapter in SAP Integration Suite using either of the above two different methods. Please refer the Documentation for step-by-step guide on adapter configuration in the iFlow. 
 
 **Note**: For more detailed instructions and troubleshooting tips, refer to SAP Integration Suite [documentation](https://help.sap.com/docs/cloud-integration/sap-cloud-integration/importing-custom-integration-adapter-in-cloud-foundry-environment) or consult your SAP support resources.
