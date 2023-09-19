@@ -21,7 +21,7 @@ In this guide, we will explore two methods for deploying a Custom Google Drive A
 
 ### Step 3: Download the Adapter File
 
-1. Download the `asutosh.drive.esa` file from the [build path](target/build/asutosh.drive.esa).
+1. Download the `asutosh.drive.esa` file from the [build path](../target/build/asutosh.drive.esa).
 2. Save it locally.
 
 ### Step 4: Upload the Custom Adapter
