@@ -59,6 +59,8 @@ For more information about the Google Drive API v3, refer to the official docume
 
 Contributions to this project are welcome! If you find any issues, have feature requests, or would like to contribute to the development of this adapter, please feel free to open an issue or submit a pull request.
 
+_You can always clone the repo and change the code as per the requirement and then use maven `mvn clean install` command to build the adapter again._
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

@@ -3,8 +3,8 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Prerequisites](#prerequisites)
-3. [Configure the Google Drive Sender Adapter](#configure-google-drive-adapter)
-4. [Configure the Google Drive Receiver Adapter](#configure-google-drive-adapter)
+3. [Configure the Google Drive Sender Adapter](#configure-custom-google-drive-sender-adapter)
+4. [Configure the Google Drive Receiver Adapter](#configure-custom-google-drive-receiver-adapter)
 5. [Deploy iFlow](#deploy-iflow)
 6. [Conclusion](#conclusion)
 
@@ -82,4 +82,6 @@ Once you have created a sender channel and selected the Google Drive receiver ad
 
 ## Conclusion
 You have successfully configured and deployed a SAP Integration Suite iFlow with a custom Google Drive adapter, enabling scheduled runs, file downloads, archiving, timestamping, and handling large files. Make sure to test the iFlow thoroughly in your tenant to ensure it meets your integration requirements.
+
+
 
