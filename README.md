@@ -36,6 +36,8 @@ To get started with this custom Google Drive adapter for SAP Integration Suite, 
 
 4. **Configure and Deploy:** Configure the adapter in the iFlow and deploy it to your SAP Integration Suite tenant. Follow the [Documentation](Documentation/configureAndDeploy.md) section for detailed guide.
 
+5. **Test Results:** Go through the test [results](Documentation/testResults.md).
+
 ## Documentation
 
 For detailed documentation on how to configure, deploy, and use this custom Google Drive adapter for SAP Integration Suite, please refer to the [Wiki](Documentation) section of this repository.
