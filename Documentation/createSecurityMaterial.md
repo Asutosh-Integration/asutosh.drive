@@ -1,4 +1,4 @@
-# Creating Client ID and Secret for Google Drive API v3
+# Creating Client ID and Secret for Google Drive API
 
 In order to access Google Drive API v3, you need to create OAuth 2.0 credentials, which include a client ID and secret. Follow these steps to obtain your credentials:
 
