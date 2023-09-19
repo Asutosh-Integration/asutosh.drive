@@ -24,8 +24,8 @@ Once you have created a sender channel and selected the Google Drive sender adap
 *General*
 
 | Parameter | Description                                 |
-|----------|---------------------------------------------|
-| Name | Enter the name of the Google Drive channel. |
+|-----------|---------------------------------------------|
+| Name      | Enter the name of the Google Drive channel. |
 
 *Settings*
 
@@ -59,8 +59,8 @@ Once you have created a sender channel and selected the Google Drive receiver ad
 *General*
 
 | Parameter | Description                                 |
-|----------|---------------------------------------------|
-| Name | Enter the name of the Google Drive channel. |
+|-----------|---------------------------------------------|
+| Name      | Enter the name of the Google Drive channel. |
 
 *Settings*
 
